@@ -39,7 +39,7 @@ window.onafterprint = function(){
     $this->registerJs('window.close();', \yii\web\View::POS_HEAD);
 }
 
-$this->title = $model->nombre;
+$this->title = $title;
 
 ?>
     <style type="text/css" media="print">
