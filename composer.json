@@ -3,7 +3,7 @@
     "description": "Yii Format Reports, use to create BIlls, Quotes, Purchase Orders and other general PDF / Excel Reports.",
     "type": "project",
     "keywords": ["yii2","extension","Inquid","reports","excel","pdf"],
-    "license": "Copyright",
+    "license": "proprietary",
     "authors": [
         {
             "name": "INQUID",
