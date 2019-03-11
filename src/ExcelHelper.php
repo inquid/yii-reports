@@ -1,12 +1,13 @@
 <?php
+
 namespace inquid\yiireports;
 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use yii\helpers\Html;
-use yii\helpers\Json;
 
 class ExcelHelper
 {
@@ -27,6 +28,66 @@ class ExcelHelper
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function createExportTable($baseArray, $headers)
+    {
+        $lastColumn = $this->getNameFromNumber(count($headers));
+        $this->objPHPExcel = new Spreadsheet();
+        $this->objPHPExcel->setActiveSheetIndex(0);
+        $this->objPHPExcel->getActiveSheet()->getStyle("A1:{$lastColumn}" . (count($baseArray) + 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $this->setColumnsStyle();
+        $this->setHeadersStyle("A1:{$lastColumn}1");
+        $this->setHeaders($headers);
+        if ($this->addFilters) {
+            $this->objPHPExcel->getActiveSheet()->setAutoFilter("A1:{$lastColumn}" . (count($baseArray) + 1));
+        }
+        $this->objPHPExcel->getActiveSheet()->fromArray($baseArray, '', 'A2');
+    }
+
+    /**
+     * @param array $baseArray Array with the contents
+     * @param array $headers Array of arrays of the headers
+     * [
+     * ['coordinate' => 'A1', 'title' => 'Header 1'],
+     * ['coordinate' => 'B1', 'title' => 'Header 2'],
+     * ['coordinate' => 'C1', 'title' => 'Header 3'],
+     * ['coordinate' => 'D1', 'title' => 'Header 4'],
+     * ['coordinate' => 'E1', 'title' => 'Header 5'],
+     * ]
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     */
+    public function createFancyExportTable($baseArray, $headers)
+    {
+        $startRow = 10;
+        $lastColumn = $this->getNameFromNumber(count($headers));
+        $this->objPHPExcel = new Spreadsheet();
+        $this->objPHPExcel->setActiveSheetIndex(0);
+        $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$lastColumn}" . (count($baseArray) + 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $objDrawing = new Drawing();
+        $objDrawing->setPath('./images/img_1x/logo.png');
+        $objDrawing->setCoordinates('A1');
+        $objDrawing->setWorksheet($this->objPHPExcel->getActiveSheet());
+
+        $this->setColumnsStyle();
+        $this->setHeadersStyle("A{$startRow}:{$lastColumn}{$startRow}");
+        $this->setHeaders($headers);
+        if ($this->addFilters) {
+            $this->objPHPExcel->getActiveSheet()->setAutoFilter("A{$startRow}:{$lastColumn}" . $startRow);
+        }
+        $this->objPHPExcel->getActiveSheet()->fromArray($baseArray, '', 'A' . ($startRow + 1));
+    }
+
+    /**
+     * @param array $baseArray Array with the contents
+     * @param array $headers Array of arrays of the headers
+     * [
+     * ['coordinate' => 'A1', 'title' => 'Header 1'],
+     * ['coordinate' => 'B1', 'title' => 'Header 2'],
+     * ['coordinate' => 'C1', 'title' => 'Header 3'],
+     * ['coordinate' => 'D1', 'title' => 'Header 4'],
+     * ['coordinate' => 'E1', 'title' => 'Header 5'],
+     * ]
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     */
+    public function createExportTableWithHeader($baseArray, $headers)
     {
         $lastColumn = $this->getNameFromNumber(count($headers));
         $this->objPHPExcel = new Spreadsheet();
