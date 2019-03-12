@@ -15,6 +15,15 @@ class ExcelHelper
     private $addFilters = true;
     const DEFAULT_PATH = 'files';
 
+    private $headerData = [];
+
+    /**
+     * @param array $data
+     */
+    public function setHeaderData(array $data){
+        $this->headerData = $data;
+    }
+
     /**
      * @param array $baseArray Array with the contents
      * @param array $headers Array of arrays of the headers
@@ -62,6 +71,12 @@ class ExcelHelper
         $this->objPHPExcel->setActiveSheetIndex(0);
         $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$lastColumn}" . (count($baseArray) + 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $objDrawing = new Drawing();
+        if(!empty($this->headerData)){
+            foreach ($this->headerData as $data){
+                $this->objPHPExcel->getActiveSheet()->getCell("D2")->setValue($data['title']);
+                $this->objPHPExcel->getActiveSheet()->getCell("E2")->setValue($data['value']);
+            }
+        }
         $objDrawing->setPath('./images/img_1x/logo.png');
         $objDrawing->setCoordinates('A1');
         $objDrawing->setWorksheet($this->objPHPExcel->getActiveSheet());
