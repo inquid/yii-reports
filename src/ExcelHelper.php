@@ -5,6 +5,7 @@ namespace inquid\yiireports;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use yii\helpers\Html;
@@ -14,15 +15,7 @@ class ExcelHelper
     private $objPHPExcel;
     private $addFilters = true;
     const DEFAULT_PATH = 'files';
-
-    private $headerData = [];
-
-    /**
-     * @param array $data
-     */
-    public function setHeaderData(array $data){
-        $this->headerData = $data;
-    }
+    private $headers;
 
     /**
      * @param array $baseArray Array with the contents
@@ -69,14 +62,8 @@ class ExcelHelper
         $lastColumn = $this->getNameFromNumber(count($headers));
         $this->objPHPExcel = new Spreadsheet();
         $this->objPHPExcel->setActiveSheetIndex(0);
-        $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$lastColumn}" . (count($baseArray) + 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$lastColumn}" . (count($baseArray) + $startRow))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $objDrawing = new Drawing();
-        if(!empty($this->headerData)){
-            foreach ($this->headerData as $data){
-                $this->objPHPExcel->getActiveSheet()->getCell("D2")->setValue($data['title']);
-                $this->objPHPExcel->getActiveSheet()->getCell("E2")->setValue($data['value']);
-            }
-        }
         $objDrawing->setPath('./images/img_1x/logo.png');
         $objDrawing->setCoordinates('A1');
         $objDrawing->setWorksheet($this->objPHPExcel->getActiveSheet());
@@ -162,7 +149,40 @@ class ExcelHelper
     private function setHeaders(array $coordinates_titles)
     {
         foreach ($coordinates_titles as $coordinates_title) {
-            $this->objPHPExcel->getActiveSheet()->SetCellValue($coordinates_title['coordinate'], $coordinates_title['title']);
+            $this->objPHPExcel->getActiveSheet()
+                ->SetCellValue($coordinates_title['coordinate'], $coordinates_title['title']);
+        }
+    }
+
+    /**
+     * @param bool $val
+     */
+    public function hideGridLines(bool $val){
+        $this->objPHPExcel->getActiveSheet()->setShowGridLines($val);
+    }
+
+    /**
+     * @param bool $val
+     */
+    public function setSheetName(string $val){
+        $this->objPHPExcel->getActiveSheet()->setTitle($val);
+    }
+
+    /**
+     * @param array $coordinates_titles
+     */
+    public function setHeaderData(array $headers)
+    {
+        $this->headers = $headers;
+        foreach ($headers as $key => $header) {
+            $this->objPHPExcel->getActiveSheet()
+                ->SetCellValue('C' . ($key + 3), $header['title']);
+            $this->objPHPExcel->getActiveSheet()->getStyle('C' . ($key + 3))->getFont()->setBold(true);
+            $this->objPHPExcel->getActiveSheet()->getStyle('C' . ($key + 3))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $this->objPHPExcel->getActiveSheet()
+                ->SetCellValue('D' . ($key + 3), $header['value']);
+            $this->objPHPExcel->getActiveSheet()->getStyle('D' . ($key + 3))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $this->hideGridLines(false);
         }
     }
 
