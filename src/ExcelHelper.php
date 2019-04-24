@@ -203,6 +203,9 @@ class ExcelHelper
         }
     }
 
+    /**
+     * @param array $array
+     */
     public function autoSizeColumns(array $array)
     {
         foreach ($array as $item) {
@@ -210,8 +213,11 @@ class ExcelHelper
         }
     }
 
-    public function freezeFirstRow(){
-        $this->objPHPExcel->getActiveSheet()->freezePane('A2');
+    /**
+     * @param string $row
+     */
+    public function freezeFirstRow($row = 'A2'){
+        $this->objPHPExcel->getActiveSheet()->freezePane($row);
     }
 
     /**
