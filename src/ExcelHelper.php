@@ -210,6 +210,10 @@ class ExcelHelper
         }
     }
 
+    public function freezeFirstRow(){
+        $this->objPHPExcel->getActiveSheet()->freezePane('A2');
+    }
+
     /**
      * @param $path
      * @param $fileName
