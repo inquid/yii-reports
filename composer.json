@@ -19,6 +19,6 @@
     "require": {
       "yiisoft/yii2": ">=2.0.5",
       	"inquid/yii2-fpdf": "*",
-        "phpoffice/phpspreadsheet": "dev-master"
+        "phpoffice/phpspreadsheet": "*"
     }
 }
